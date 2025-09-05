@@ -3,6 +3,7 @@ const multer = require('multer');
 const mysql = require('mysql2/promise');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { generatePDF } = require('./export.js');
+const { sendEmail } = require('./email.js');
 const app = express();
 const port = 3000;
 
@@ -75,6 +76,8 @@ app.get('/export', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM file_qa');
     generatePDF(rows);
+    const email = rows.length ? rows[0].email : 'user@example.com'; // use last email or default
+    sendEmail(email, 'report.pdf');
     res.download('report.pdf');
   } catch (error) {
     res.status(500).json({ error: 'Export error: ' + error.message });
