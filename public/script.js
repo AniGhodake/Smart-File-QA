@@ -42,7 +42,7 @@ document.getElementById('file-input').addEventListener('change', () => {
         preview.appendChild(link);
       }
       alert('Uploaded: ' + data.filename);
-      lastUploadId = data.id; // store the upload ID
+      lastUploadId = data.id;
     })
     .catch(error => {
       alert('Error: ' + error.message);
@@ -56,8 +56,18 @@ document.getElementById('submit-btn').addEventListener('click', () => {
     alert('Please enter email, question, and upload a file first!');
     return;
   }
-  // Placeholder for API call (to be implemented)
-  alert('Email: ' + email + ', Question: ' + prompt + ', Upload ID: ' + lastUploadId);
+  fetch('/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, prompt, id: lastUploadId })
+  })
+    .then(response => response.json())
+    .then(data => {
+      alert('Answer: ' + data.answer);
+    })
+    .catch(error => {
+      alert('Error: ' + error.message);
+    });
 });
 
 var temp = 0; // not used

@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { generatePDF } = require('./export.js');
 const app = express();
 const port = 3000;
 
@@ -26,12 +27,32 @@ const upload = multer({
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '', 
+  password: '', // adjust if needed
   database: 'db1'
 });
 
 // Gemini AI setup
-const genAI = new GoogleGenerativeAI('YOUR_API_KEY_HERE'); // due to security cocerns i have not mentioned my key
+const genAI = new GoogleGenerativeAI('YOUR_API_KEY_HERE'); // replace with your key
+
+// Submit route
+app.post('/submit', async (req, res) => {
+  const { email, prompt, id } = req.body;
+  if (!email || !prompt || !id) {
+    return res.status(400).json({ error: 'Missing email, prompt, or upload ID' });
+  }
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContent(prompt);
+    const answer = result.response.text();
+    await pool.query(
+      'UPDATE file_qa SET email = ?, question = ?, answer = ?, timestamp = NOW() WHERE id = ?',
+      [email, prompt, answer, id]
+    );
+    res.json({ answer });
+  } catch (error) {
+    res.status(500).json({ error: 'API or database error: ' + error.message });
+  }
+});
 
 // Upload route with MySQL save
 app.post('/upload', upload.single('file'), async (req, res) => {
@@ -46,6 +67,17 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.json({ filename: req.file.originalname, type: req.file.mimetype, id: rows.insertId });
   } catch (error) {
     res.status(500).json({ error: 'Database error: ' + error.message });
+  }
+});
+
+// Export PDF route
+app.get('/export', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM file_qa');
+    generatePDF(rows);
+    res.download('report.pdf');
+  } catch (error) {
+    res.status(500).json({ error: 'Export error: ' + error.message });
   }
 });
 
