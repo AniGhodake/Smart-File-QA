@@ -1,5 +1,7 @@
 const express  = require('express');
 const multer =require('multer');
+const mysql = require('mysql2/promise');
+const { GoogleGenerativeAI } = require('@google/generative-ai'); 
 const app = express();
 const port = 3000;
 
@@ -21,6 +23,17 @@ const upload = multer({
     }
     }
 });
+
+
+// Mysql connection setup
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'Aniket',
+  password: 'Aniket@123', 
+  database: 'assignment'
+});
+
+const genAI = new GoogleGenerativeAI('YOUR_API_KEY_HERE'); // i have not mentioned my api key for security concerns
 
 
 //Upload route 
