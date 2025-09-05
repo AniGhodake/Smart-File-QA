@@ -13,7 +13,7 @@ const upload = multer({
     limit: {fileSize:5 * 1024 * 1024},                   // ********** 5MB limit
     fileFilter:(req,file,cb)=>{
         const allowedTypes = ['image/jpeg','image/png','application/pdf'];
-    if(allowedTypes.includes.includes(file.minetype)){
+    if(allowedTypes.includes(file.mimetype)){
         cb(null,true);
     }
     else{
