@@ -24,7 +24,7 @@ const upload = multer({
   }
 });
 
-// MySQL connection
+// MySQL
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
