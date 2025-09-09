@@ -9,11 +9,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- App wrapper: sidebar (controls) + main content (chat) -->
     <div class="app-container">
-        <!-- Sidebar -->
+       
         <div class="sidebar">
             <div class="header">
                 <div class="logo">
+                     <!-- brain icon as a quick visual hint it's an AI app -->
                     <i class="fas fa-brain"></i>
                     Smart File QA
                 </div>
@@ -21,8 +23,9 @@
             </div>
             
             <div class="sidebar-content">
-                <!-- Upload Zone -->
+                
                 <div class="upload-section">
+                    <!--- Upload Section: drag & drop area -->
                     <div class="upload-zone" id="upload-zone">
                         <input type="file" id="file-input" style="display: none;" 
                                accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx">
@@ -33,7 +36,7 @@
                         <div class="upload-hint">Supports images, videos, PDFs, and documents</div>
                     </div>
                     
-                    <!-- Error Message -->
+                    <!-- Error Message --->
                     <div class="error-message" id="error-message">
                         <i class="fas fa-exclamation-triangle error-icon"></i>
                         <span id="error-text"></span>
@@ -42,7 +45,7 @@
 
                 </div>
                 
-                <!-- File Chip -->
+                <!---- File Chip ---->
                 <div class="file-chip" id="file-chip">
                     <div class="file-icon">
                         <i class="fas fa-file" id="file-icon"></i>
@@ -61,7 +64,7 @@
                     </div>
                 </div>
                 
-                <!-- Email Section -->
+                <!-- Email part -->
                 <div class="email-section">
                     <label class="section-label">Email (for export)</label>
                     <input type="email" class="email-input" id="email-input" placeholder="your@email.com">
@@ -75,7 +78,7 @@
             </div>
         </div>
         
-        <!-- Main Content -->
+        <!-- Main box -->
         <div class="main-content">
             <div class="chat-header">
                 <div class="chat-title">AI Assistant</div>
@@ -92,7 +95,7 @@
                     </div>
                 </div>
                 
-                <!-- Typing Indicator -->
+                <!-- Typing indicator: show while waiting for AI -->
                 <div class="typing-indicator" id="typing-indicator">
                     <div class="message-avatar ai">AI</div>
                     <div class="typing-dots">
@@ -117,7 +120,7 @@
         </div>
     </div>
     
-    <!-- Preview Modal -->
+    <!-- Preview icon which is button: images/PDFs/vid display here -->
     <div class="modal" id="preview-modal">
         <div class="modal-content">
             <div class="modal-header">

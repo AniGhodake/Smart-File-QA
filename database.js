@@ -2,21 +2,21 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
+
+const uploadsDir = path.join(__dirname, 'uploads');       /// upload should be there in your project
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Database setup
+///    database setup
 const dbPath = path.join(__dirname, 'smart_file_qa.db');
 const db = new sqlite3.Database(dbPath);
 
-// Initialize database schema
+// initialize database without the values     just void tables
 function initDatabase() {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      // Users table
+      ////                                          users table
       db.run(`
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +25,7 @@ function initDatabase() {
         )
       `);
 
-      // Sessions table
+      ////                                          sessions table
       db.run(`
         CREATE TABLE IF NOT EXISTS sessions (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +37,7 @@ function initDatabase() {
         )
       `);
 
-      // Files table
+      ///                                               files
       db.run(`
         CREATE TABLE IF NOT EXISTS files (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,7 +53,7 @@ function initDatabase() {
         )
       `);
 
-      // Conversations table
+      ///                                                    Conversations table
       db.run(`
         CREATE TABLE IF NOT EXISTS conversations (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,9 +78,9 @@ function initDatabase() {
   });
 }
 
-// Database helper functions
+/// database helper functions          stuck---may have issue
 const dbHelpers = {
-  // Create or get user by email
+                       // create or get user by email
   async createOrGetUser(email) {
     return new Promise((resolve, reject) => {
       if (!email) {
@@ -109,11 +109,11 @@ const dbHelpers = {
     });
   },
 
-  // Create or get session
+  //                                    Create / get session
   async createOrGetSession(sessionId, userEmail = null) {
     return new Promise(async (resolve, reject) => {
       try {
-        // First check if session exists
+        // check if session exists
         db.get('SELECT * FROM sessions WHERE session_id = ?', [sessionId], async (err, row) => {
           if (err) {
             reject(err);
@@ -123,7 +123,7 @@ const dbHelpers = {
           if (row) {
             resolve(row);
           } else {
-            // Create new session
+            //create new session
             let userId = null;
             if (userEmail) {
               const user = await dbHelpers.createOrGetUser(userEmail);
@@ -151,7 +151,7 @@ const dbHelpers = {
     });
   },
 
-  // Save file info
+  //                                              Save file 
   async saveFile(sessionId, fileData, filePath) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -185,7 +185,7 @@ const dbHelpers = {
     });
   },
 
-  // Save conversation
+  //                                     save conversation
   async saveConversation(sessionId, prompt, aiResponse, responseTime, hasFile = false, fileName = null) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -223,7 +223,7 @@ const dbHelpers = {
     });
   },
 
-  // Get session conversations
+  // get session conversations       unique            by id
   async getSessionConversations(sessionId) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -246,7 +246,7 @@ const dbHelpers = {
     });
   },
 
-  // Get session files
+  //                               get session file
   async getSessionFiles(sessionId) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -269,7 +269,10 @@ const dbHelpers = {
     });
   },
 
-  // Update session user
+
+
+
+  //                    update session for user
   async updateSessionUser(sessionId, userEmail) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -294,7 +297,7 @@ const dbHelpers = {
   }
 };
 
-// Export database and helpers
+// export database and helpers              very important step    
 module.exports = {
   db,
   initDatabase,

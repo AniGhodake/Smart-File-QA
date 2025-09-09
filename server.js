@@ -892,16 +892,6 @@ app.post('/send-report', asyncHandler(async (req, res) => {
   }
 }));
 
-<<<<<<< HEAD
-=======
-// MySQL
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '', // adjust if needed
-  database: 'db1'
-});
->>>>>>> 98a31cc28956c2c72f5c8b52f2b33545c2aff490
 
 // Enhanced Secure Download Route with Fallback Support
 app.get('/secure-download/:sessionId/:fileId/:filename', asyncHandler(async (req, res) => {
@@ -1161,8 +1151,4 @@ const server = app.listen(port, () => {
   console.log("=================================");
 });
 
-<<<<<<< HEAD
 module.exports = app;
-=======
-var temp1 = 0; // not needed but ok
->>>>>>> 98a31cc28956c2c72f5c8b52f2b33545c2aff490

@@ -1,20 +1,20 @@
-let currentFile = null;
-let isMarkedLoaded = false;
+let currentFile = null;// will store info about the uploaded file
+let isMarkedLoaded = false;//flag
 let zoomLevel = 1;
 
-// Clear session on page load
+// Clear session when page load
 window.onload = () => {
   console.log("Application initialized");
-  clearErrorMessage();
+  clearErrorMessage();  // remove any leftover errors from past sessions
 };
 
-// Load marked library (Markdown parser) from CDN
+// Load marked.js
 const script = document.createElement("script");
 script.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
 script.onload = () => {
   isMarkedLoaded = true;
   document.getElementById("send-btn").disabled = false;
-  console.log("Marked library loaded successfully");
+  console.log("Marked library loaded successfully");//// good sign
 };
 script.onerror = () => {
   console.error("Failed to load marked library");
@@ -23,8 +23,8 @@ script.onerror = () => {
 document.head.appendChild(script);
 
 // ===== DOM ELEMENTS =====
-const uploadZone = document.getElementById("upload-zone");
-const fileInput = document.getElementById("file-input");
+const uploadZone = document.getElementById("upload-zone"); // file drag/drop zone
+const fileInput = document.getElementById("file-input");/// hidden file input
 const fileChip = document.getElementById("file-chip");
 const fileName = document.getElementById("file-name");
 const fileSize = document.getElementById("file-size");
@@ -47,19 +47,20 @@ const exportBtn = document.getElementById("export-btn");
 const errorMessage = document.getElementById("error-message");
 const errorText = document.getElementById("error-text");
 
-// ===== UTILITY FUNCTIONS =====
+///                 utility helping funtions
 function showErrorMessage(message) {
   errorText.textContent = message;
   errorMessage.classList.add("show");
   setTimeout(() => {
     clearErrorMessage();
-  }, 5000);
+  }, 5000);        // hide error after 5s
 }
 
 function clearErrorMessage() {
   errorMessage.classList.remove("show");
 }
 
+///    Convert file size into nice readable format
 function formatFileSize(bytes) {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -83,7 +84,7 @@ function autoResize(textarea) {
   textarea.style.height = Math.min(textarea.scrollHeight, 128) + "px";
 }
 
-// ===== FILE UPLOAD FUNCTIONS =====
+//  file upload handlerrs
 uploadZone.addEventListener("click", () => fileInput.click());
 
 uploadZone.addEventListener("dragover", (e) => {
@@ -110,7 +111,7 @@ fileInput.addEventListener("change", (e) => {
 
 async function handleFileUpload(file) {
   clearErrorMessage();
-
+///      // basic validation
   if (file.size > 10 * 1024 * 1024) {
     showErrorMessage("File size must be less than 10MB");
     return;
@@ -136,6 +137,7 @@ async function handleFileUpload(file) {
   const formData = new FormData();
   formData.append("file", file);
 
+  //// disable send button while uploading     its seeen on video
   sendBtn.disabled = true;
   sendBtn.innerHTML = '<div class="loading"></div>';
 
@@ -165,7 +167,7 @@ function displayFileChip(fileData, fileSize) {
   fileChip.classList.add("show");
 }
 
-// ===== FILE ACTIONS =====
+// file actions
 previewBtn.addEventListener("click", () => {
   if (!currentFile) return;
 
@@ -224,7 +226,7 @@ deleteBtn.addEventListener("click", async () => {
   }
 });
 
-// ===== ZOOM CONTROLS =====
+//// zoom controler
 zoomIn.addEventListener("click", () => {
   zoomLevel = Math.min(zoomLevel + 0.2, 3);
   const img = previewContent.querySelector("img");
@@ -236,7 +238,7 @@ zoomOut.addEventListener("click", () => {
   if (img) img.style.transform = `scale(${zoomLevel})`;
 });
 
-// ===== MODAL FUNCTIONS =====
+     /////          modal functions
 modalClose.addEventListener("click", closeModal);
 previewModal.addEventListener("click", (e) => {
   if (e.target === previewModal) closeModal();
@@ -248,7 +250,7 @@ function closeModal() {
   zoomLevel = 1;
 }
 
-// ===== CHAT FUNCTIONS =====
+/////        chat functions
 sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
@@ -321,7 +323,7 @@ function hideTypingIndicator() {
   if (typingIndicator.parentNode) typingIndicator.parentNode.removeChild(typingIndicator);
 }
 
-// ===== EMAIL & EXPORT =====
+///           email and export functions
 emailInput.addEventListener("input", async () => {
   try {
     await fetch("/update-email", {
@@ -372,13 +374,13 @@ function showSuccessMessage(msg) {
   } else alert(msg);
 }
 
-// ===== SHORTCUTS =====
+///shortcut
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && previewModal.classList.contains("show")) closeModal();
   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") sendMessage();
 });
 
-// ===== ERROR HANDLING =====
+/// error handling         above
 window.addEventListener("error", (e) => {
   console.error("Global error:", e.error);
   showErrorMessage("Unexpected error occurred. Refresh page.");

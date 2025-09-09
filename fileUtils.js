@@ -1,20 +1,20 @@
 const fs = require('fs');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const path = require('path');   ///        file and folder paths
+const jwt = require('jsonwebtoken');      // secure tokens    for generations
+const crypto = require('crypto');       /// unique session ids ..... random given
 
-// Generate unique session ID
+//                    unique session ID
 function generateSessionId() {
   return crypto.randomBytes(16).toString('hex');
 }
 
-// Generate secure file token
+//         generate secure file token
 function generateFileToken(sessionId, fileId, expiresIn = '24h') {
   const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
   return jwt.sign({ sessionId, fileId, type: 'file_download' }, secret, { expiresIn });
 }
 
-// Verify file token
+/////         verify file token with your in .env
 function verifyFileToken(token) {
   try {
     const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
@@ -24,7 +24,7 @@ function verifyFileToken(token) {
   }
 }
 
-// Generate download link (for actual downloads)
+// generate download link (for actual downloads)
 function generateDownloadLink(sessionId, fileId, filename, baseUrl) {
   const token = generateFileToken(sessionId, fileId);
   const safeFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -32,7 +32,7 @@ function generateDownloadLink(sessionId, fileId, filename, baseUrl) {
   return `${baseUrl}/secure-download/${sessionId}/${fileId}/${encodedFilename}?token=${token}`;
 }
 
-// NEW: Generate preview link (for browser viewing)
+///       generate preview link (for browser viewing)       // currently have problems
 function generatePreviewLink(sessionId, fileId, filename, baseUrl) {
   const token = generateFileToken(sessionId, fileId);
   const safeFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -40,16 +40,19 @@ function generatePreviewLink(sessionId, fileId, filename, baseUrl) {
   return `${baseUrl}/secure-download/${sessionId}/${fileId}/${encodedFilename}?token=${token}&preview=true`;
 }
 
-// Save file to disk
+/// save file to disk
 async function saveFileToDisk(sessionId, fileBuffer, originalFilename, mimetype) {
   try {
-    // Create session directory
+    //// create session directory
     const sessionDir = path.join(__dirname, 'uploads', sessionId);
     if (!fs.existsSync(sessionDir)) {
       fs.mkdirSync(sessionDir, { recursive: true });
     }
 
-    // Generate unique filename to avoid conflicts
+
+
+
+    ////         generate unique filename ..... to ovveride with same name conflicts 
     const timestamp = Date.now();
     const ext = path.extname(originalFilename);
     const baseName = path.basename(originalFilename, ext);
@@ -57,8 +60,8 @@ async function saveFileToDisk(sessionId, fileBuffer, originalFilename, mimetype)
     
     const filePath = path.join(sessionDir, safeFilename);
     
-    // Write file to disk
-    await fs.promises.writeFile(filePath, fileBuffer);
+    
+    await fs.promises.writeFile(filePath, fileBuffer);       // write file to disk
     
     return {
       filePath: filePath,
@@ -71,8 +74,8 @@ async function saveFileToDisk(sessionId, fileBuffer, originalFilename, mimetype)
   }
 }
 
-// Read file from disk
-async function readFileFromDisk(filePath) {
+
+async function readFileFromDisk(filePath) {       //// read file from disk
   try {
     if (!fs.existsSync(filePath)) {
       throw new Error('File not found');
@@ -83,8 +86,8 @@ async function readFileFromDisk(filePath) {
   }
 }
 
-// Delete file from disk
-async function deleteFileFromDisk(filePath) {
+
+async function deleteFileFromDisk(filePath) {     // / delete file.......disk
   try {
     if (fs.existsSync(filePath)) {
       await fs.promises.unlink(filePath);
@@ -97,7 +100,7 @@ async function deleteFileFromDisk(filePath) {
   }
 }
 
-// Clean up old session files (call periodically)
+//////               clean up old session files ...... 7 days
 async function cleanupOldFiles(daysOld = 7) {
   try {
     const uploadsDir = path.join(__dirname, 'uploads');
@@ -122,7 +125,7 @@ async function cleanupOldFiles(daysOld = 7) {
   }
 }
 
-// Get file info from path
+///////  getting file info from path......... from project folder
 function getFileInfo(filePath) {
   try {
     if (!fs.existsSync(filePath)) return null;
@@ -139,8 +142,8 @@ function getFileInfo(filePath) {
   }
 }
 
-// Format file size
-function formatFileSize(bytes) {
+
+function formatFileSize(bytes) {        //// format file size
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -153,9 +156,9 @@ module.exports = {
   generateFileToken,
   verifyFileToken,
   generateDownloadLink,
-  generatePreviewLink, // NEW: Export the preview link function
+  generatePreviewLink, //////          export the preview link function
   saveFileToDisk,
-  readFileFromDisk,
+  readFileFromDisk,                  // few works few are under process
   deleteFileFromDisk,
   cleanupOldFiles,
   getFileInfo,

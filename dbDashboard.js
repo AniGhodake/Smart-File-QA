@@ -1,9 +1,9 @@
 const express = require('express');
-const { db } = require('./database');
+const { db } = require('./database');   /// reuired modules which we used
 const path = require('path');
 const router = express.Router();
 
-// Utility functions
+///         convert file size in bytes to human-readable format ---KB, MB, GB
 function formatFileSize(bytes) {
     if (!bytes) return '0 Bytes';
     const k = 1024;
@@ -12,16 +12,24 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+////         format date into this local string 
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
 }
 
+///          truncate which is advised i hv no idea       --------- search it
 function truncateText(text, maxLength = 100) {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
+
+
+
+
+
+//                  return icon        based on file
 function getFileIcon(mimetype) {
     if (!mimetype) return '📄';
     if (mimetype.startsWith('image/')) return '🖼️';
@@ -32,7 +40,7 @@ function getFileIcon(mimetype) {
     return '📄';
 }
 
-// Database query helpers
+// database query helpers                   return results as promise
 function queryDatabase(sql, params = []) {
     return new Promise((resolve, reject) => {
         db.all(sql, params, (err, rows) => {
@@ -48,7 +56,7 @@ function queryDatabase(sql, params = []) {
 function getStats() {
     return new Promise((resolve, reject) => {
         const stats = {};
-
+                              ///   predefined queryies 
         const queries = [
             { key: 'totalSessions', sql: 'SELECT COUNT(*) as count FROM sessions' },
             { key: 'totalUsers', sql: 'SELECT COUNT(*) as count FROM users' },
@@ -58,6 +66,13 @@ function getStats() {
         ];
 
         let completed = 0;
+
+
+
+
+
+
+        ///run query and collect result
         queries.forEach(({ key, sql }) => {
             db.get(sql, [], (err, row) => {
                 if (err) {
@@ -74,7 +89,7 @@ function getStats() {
     });
 }
 
-// Generate CSS styles
+////////      generate CSS styles        for dashboard
 function generateCSS() {
     return `
     <style>
@@ -334,7 +349,7 @@ function generateCSS() {
   `;
 }
 
-// Generate JavaScript for tab functionality
+///   generate JavaScript for tab functionality in the loca......../db 
 function generateJS() {
     return `
     <script>
@@ -369,10 +384,10 @@ function generateJS() {
   `;
 }
 
-// Main dashboard route
+// main dashboard route
 router.get('/', async (req, res) => {
     try {
-        // Get all data
+        //gGet all data
         const [stats, sessions, users, files, conversations] = await Promise.all([
             getStats(),
             queryDatabase(`
