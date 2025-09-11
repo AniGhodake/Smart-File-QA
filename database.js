@@ -297,7 +297,7 @@ const dbHelpers = {
   }
 };
 
-// export database and helpers              very important step    
+/// export database and helpers              very important step    
 module.exports = {
   db,
   initDatabase,
