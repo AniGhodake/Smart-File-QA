@@ -206,7 +206,7 @@ function generateCSS() {
       .table-container {
         background: white;
         border-radius: 12px;
-        overflow: hidden;
+        overflow-x: auto;
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         border: 1px solid #e2e8f0;
       }
